@@ -1,4 +1,5 @@
 ﻿using System;
+using ToDoList.GUI;
 
 namespace ToDoList
 {
@@ -6,7 +7,7 @@ namespace ToDoList
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            UserInterface.Start();
         }
     }
 }
