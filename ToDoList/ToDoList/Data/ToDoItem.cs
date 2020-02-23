@@ -11,12 +11,9 @@ namespace ToDoList.Data
         public string Task { get; set; }
         public int Priority { get; set; }
 
-        public ToDoItem(int id, DateTime date, string task, int priority)
+        public override string ToString()
         {
-            ID = id;
-            Date = date;
-            Task = task;
-            Priority = priority;
+            return $"ToDoItem(ID:{ID}, Datw:{Date}, Task:{Task}, Priority:{Priority})";
         }
         public int CompareTo(ToDoItem other)
         {

@@ -7,6 +7,7 @@ using ToDoList.Data;
 
 namespace ToDoList.GUI
 {
+    /*
     class UserInterface
     {
         public static string st = "\t\t ";
@@ -552,5 +553,5 @@ namespace ToDoList.GUI
                 }
             }
         }
-    }
+    }*/
 }

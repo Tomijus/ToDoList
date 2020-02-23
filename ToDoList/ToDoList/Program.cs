@@ -1,5 +1,6 @@
 ﻿using System;
 using ToDoList.GUI;
+using ToDoList.SQL;
 
 namespace ToDoList
 {
@@ -7,7 +8,9 @@ namespace ToDoList
     {
         static void Main(string[] args)
         {
-            UserInterface.Start();
+            //UserInterface.Start();
+            ToDoListMySql toDoListMySql = new ToDoListMySql();
+            toDoListMySql.GetAll();
         }
     }
 }
