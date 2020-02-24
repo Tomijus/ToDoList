@@ -10,7 +10,7 @@ namespace ToDoList
         {
             //UserInterface.Start();
             ToDoListMySql toDoListMySql = new ToDoListMySql();
-            toDoListMySql.GetAll();
+            toDoListMySql.Connect();
         }
     }
 }

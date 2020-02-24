@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using SqlExamples.Repository;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,16 +7,26 @@ using ToDoList.Data;
 
 namespace ToDoList.SQL
 {
-    class ToDoListMySql
+    class ToDoListMySql : SqlConnection, IRepository<ToDoItem>
     {
         private MySqlConnection connection;
         private MySqlCommand cmd;
         private MySqlDataReader dr;
+        public override bool Connect()
+        {
+            return OpenConnection(
+                host: "remotemysql.com",
+                dbName: "RBT254jPGD",
+                dbUser: "RBT254jPGD",
+                dbPassword: "pidF6cSLom",
+                port: 3306
+            );
+        }
 
-        private bool OpenConnection()
+        private bool OpenConnection(string host, string dbName, string dbUser, string dbPassword, int port)
         {
 
-            string connstring = @"Source=(localdb)\MSSQLLocalDB;Initial Catalog=ToDoListDB";
+            string connstring = $"server={host}; database={dbName}; port={port}; user={dbUser}; password={dbPassword};";
             connection = new MySqlConnection(connstring);
 
             //TODO : check if table needs to be created.
@@ -25,11 +36,31 @@ namespace ToDoList.SQL
 
             return true;
         }
+
+        private void InitTables()
+        {
+            string sql = @"CREATE TABLE `ToDoList` ( 
+                            `Id` INT NOT NULL AUTO_INCREMENT UNIQUE, 
+                            `Date` DateTime NOT NULL , 
+                            `Task` TEXT NULL , 
+                            `Priority` INT NULL , 
+
+                            PRIMARY KEY (`Id`)
+                        )";
+
+            connection.Open();
+            using (cmd = new MySqlCommand(sql, connection))
+            {
+                cmd.ExecuteNonQuery();
+            }
+            connection.Close();
+        }
+
         public List<ToDoItem> GetAll()
         {
             List<ToDoItem> retVal = new List<ToDoItem>();
 
-            using (cmd = new MySqlCommand("SELECT * FROM Students", connection))
+            using (cmd = new MySqlCommand("SELECT * FROM ToDoList", connection))
             {
                 connection.Open();
                 using (dr = cmd.ExecuteReader())
@@ -55,7 +86,7 @@ namespace ToDoList.SQL
         public ToDoItem Get(int id)
         {
             ToDoItem retVal = null;
-            using (cmd = new MySqlCommand("SELECT * FROM Students WHERE ID = @id", connection))
+            using (cmd = new MySqlCommand("SELECT * FROM ToDoList WHERE ID = @id", connection))
             {
                 connection.Open();
                 cmd.Parameters.Add(new MySqlParameter("id", id));
@@ -81,8 +112,8 @@ namespace ToDoList.SQL
         public void Add(ToDoItem item)
         {
             // MySql nemegsta ' kabutes. ` tinka, arba nieko nedet tinka.. :\
-            using (cmd = new MySqlCommand(@"INSERT INTO Students (`Name`, `Score`, `City`) 
-                                                           VALUES(@name, @score, @city);", connection))
+            using (cmd = new MySqlCommand(@"INSERT INTO ToDoList (`Date`, `Task`, `Priority`) 
+                                                           VALUES(@date, @task, @priority);", connection))
             {
                 connection.Open();
 
@@ -97,8 +128,8 @@ namespace ToDoList.SQL
 
         public void Update(ToDoItem item)
         {
-            using (cmd = new MySqlCommand(@"UPDATE Students 
-                                               SET Name = @name, Score = @score, City = @city 
+            using (cmd = new MySqlCommand(@"UPDATE ToDoList 
+                                               SET Date = @date, Task = @task, Priority = @priority 
                                              WHERE Id=@id;", connection))
             {
                 connection.Open();
@@ -115,7 +146,7 @@ namespace ToDoList.SQL
 
         public void Delete(int id)
         {
-            using (cmd = new MySqlCommand(@"DELETE FROM Students WHERE ID = @id;", connection))
+            using (cmd = new MySqlCommand(@"DELETE FROM ToDoList WHERE ID = @id;", connection))
             {
                 connection.Open();
 
