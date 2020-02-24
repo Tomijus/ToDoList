@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace SqlExamples.Repository
+namespace ToDoList.SQL
 {
     public interface IRepository<T>
     {

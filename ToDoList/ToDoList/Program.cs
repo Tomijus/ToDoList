@@ -8,9 +8,9 @@ namespace ToDoList
     {
         static void Main(string[] args)
         {
-            //UserInterface.Start();
-            ToDoListMySql toDoListMySql = new ToDoListMySql();
-            toDoListMySql.Connect();
+            UserInterface app = new UserInterface();
+            app.StartSqlLite();
+            
         }
     }
 }

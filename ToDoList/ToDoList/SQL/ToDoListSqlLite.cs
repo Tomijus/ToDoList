@@ -1,54 +1,49 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using ToDoList.Data;
+using System.Data.SQLite;
+using System.IO;
 
 namespace ToDoList.SQL
 {
-    class ToDoListMySql : SqlConnection, IRepository<ToDoItem>
+    class ToDoListSqlLite : SqlConnection, IRepository<ToDoItem>
     {
-        private MySqlConnection connection;
-        private MySqlCommand cmd;
-        private MySqlDataReader dr;
+        private SQLiteConnection connection;
+        private SQLiteCommand cmd;
+        private SQLiteDataReader dr;
+
         public override bool Connect()
         {
-            return OpenConnection(
-                host: "remotemysql.com",
-                dbName: "RBT254jPGD",
-                dbUser: "RBT254jPGD",
-                dbPassword: "pidF6cSLom",
-                port: 3306
-            );
+            return OpenConnection("MyDatabase.sqlite");
         }
 
-        private bool OpenConnection(string host, string dbName, string dbUser, string dbPassword, int port)
+        private bool OpenConnection(string dbFalieName)
         {
-
-            string connstring = $"server={host}; database={dbName}; port={port}; user={dbUser}; password={dbPassword};";
-            connection = new MySqlConnection(connstring);
-
-            //TODO : check if table needs to be created.
-            //InitTables();
-
-            //TODO : check if connection is fine.
+            if (!File.Exists(dbFalieName))
+            {
+                SQLiteConnection.CreateFile(dbFalieName);
+                connection = new SQLiteConnection("Data Source=" + dbFalieName + ";Version=3;");
+                InitTables();
+            }
+            else
+            {
+                connection = new SQLiteConnection("Data Source=" + dbFalieName + ";Version=3;");
+            }
 
             return true;
         }
-
         private void InitTables()
         {
-            string sql = @"CREATE TABLE `ToDoList` ( 
-                            `Id` INT NOT NULL AUTO_INCREMENT UNIQUE, 
-                            `Date` DateTime NOT NULL , 
-                            `Task` TEXT NULL , 
-                            `Priority` INT NULL , 
-
-                            PRIMARY KEY (`Id`)
-                        )";
+            string sql = @"CREATE TABLE ToDoList ( 
+                            'Id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 
+                            'Date' DATETIME NOT NULL, 
+                            'Task' TEXT NOT NULL, 
+                            'Priority' INTEGER NOT NULL, 
+                        );";
 
             connection.Open();
-            using (cmd = new MySqlCommand(sql, connection))
+            using (cmd = new SQLiteCommand(sql, connection))
             {
                 cmd.ExecuteNonQuery();
             }
@@ -59,7 +54,7 @@ namespace ToDoList.SQL
         {
             List<ToDoItem> retVal = new List<ToDoItem>();
 
-            using (cmd = new MySqlCommand("SELECT * FROM ToDoList", connection))
+            using (cmd = new SQLiteCommand("SELECT * FROM ToDoList", connection))
             {
                 connection.Open();
                 using (dr = cmd.ExecuteReader())
@@ -85,10 +80,10 @@ namespace ToDoList.SQL
         public ToDoItem Get(int id)
         {
             ToDoItem retVal = null;
-            using (cmd = new MySqlCommand("SELECT * FROM ToDoList WHERE ID = @id", connection))
+            using (cmd = new SQLiteCommand("SELECT * FROM ToDoList WHERE ID = @id", connection))
             {
                 connection.Open();
-                cmd.Parameters.Add(new MySqlParameter("id", id));
+                cmd.Parameters.Add(new SQLiteParameter("id", id));
                 using (dr = cmd.ExecuteReader())
                 {
                     if (dr.HasRows)
@@ -111,32 +106,37 @@ namespace ToDoList.SQL
         public void Add(ToDoItem item)
         {
             // MySql nemegsta ' kabutes. ` tinka, arba nieko nedet tinka.. :\
-            using (cmd = new MySqlCommand(@"INSERT INTO ToDoList (`Date`, `Task`, `Priority`) 
+            using (cmd = new SQLiteCommand(@"INSERT INTO ToDoList ('Date', 'Task', 'Priority') 
                                                            VALUES(@date, @task, @priority);", connection))
             {
                 connection.Open();
 
-                cmd.Parameters.Add(new MySqlParameter("date", item.Date));
-                cmd.Parameters.Add(new MySqlParameter("task", item.Task));
-                cmd.Parameters.Add(new MySqlParameter("priority", item.Priority));
+                cmd.Parameters.Add(new SQLiteParameter("date", item.Date));
+                cmd.Parameters.Add(new SQLiteParameter("task", item.Task));
+                cmd.Parameters.Add(new SQLiteParameter("priority", item.Priority));
                 cmd.ExecuteNonQuery();
 
                 connection.Close();
             }
         }
 
+        internal void Add()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Update(ToDoItem item)
         {
-            using (cmd = new MySqlCommand(@"UPDATE ToDoList 
+            using (cmd = new SQLiteCommand(@"UPDATE ToDoList 
                                                SET Date = @date, Task = @task, Priority = @priority 
                                              WHERE Id=@id;", connection))
             {
                 connection.Open();
 
-                cmd.Parameters.Add(new MySqlParameter("id", item.ID));
-                cmd.Parameters.Add(new MySqlParameter("date", item.Date));
-                cmd.Parameters.Add(new MySqlParameter("task", item.Task));
-                cmd.Parameters.Add(new MySqlParameter("priority", item.Priority));
+                cmd.Parameters.Add(new SQLiteParameter("id", item.ID));
+                cmd.Parameters.Add(new SQLiteParameter("date", item.Date));
+                cmd.Parameters.Add(new SQLiteParameter("task", item.Task));
+                cmd.Parameters.Add(new SQLiteParameter("priority", item.Priority));
                 cmd.ExecuteNonQuery();
 
                 connection.Close();
@@ -145,11 +145,11 @@ namespace ToDoList.SQL
 
         public void Delete(int id)
         {
-            using (cmd = new MySqlCommand(@"DELETE FROM ToDoList WHERE ID = @id;", connection))
+            using (cmd = new SQLiteCommand(@"DELETE FROM ToDoList WHERE ID = @id;", connection))
             {
                 connection.Open();
 
-                cmd.Parameters.Add(new MySqlParameter("id", id));
+                cmd.Parameters.Add(new SQLiteParameter("id", id));
                 cmd.ExecuteNonQuery();
 
                 connection.Close();
