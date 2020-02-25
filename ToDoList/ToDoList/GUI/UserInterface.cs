@@ -142,13 +142,14 @@ namespace ToDoList.GUI
             Console.WriteLine("Table content : ");
             List<ToDoItem> toDoItem = toDoListRepository.GetAll();
             toDoItem.ForEach(Console.WriteLine);
+            Console.ReadLine();
         }
 
         private void AddTableData()
         {
             Console.WriteLine("Adding new task: ");
             Console.Write("Date:");
-            DateTime date = Convert.ToDateTime(Console.ReadLine());
+            string date = Console.ReadLine();
             Console.Write("Task:");
             String task = Console.ReadLine();            
             Console.Write("Priority:");
@@ -181,7 +182,7 @@ namespace ToDoList.GUI
 
                 //Console.WriteLine("Updating student - " + student);
                 Console.Write("New date:");
-                DateTime date = Convert.ToDateTime(Console.ReadLine());
+                string date = Console.ReadLine();
                 Console.Write("New task:");
                 String task = Console.ReadLine();
                 Console.Write("New priority:");

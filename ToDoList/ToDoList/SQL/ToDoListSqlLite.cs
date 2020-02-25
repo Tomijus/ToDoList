@@ -33,14 +33,14 @@ namespace ToDoList.SQL
 
             return true;
         }
-        private void InitTables()
+        protected void InitTables()
         {
-            string sql = @"CREATE TABLE ToDoList ( 
-                            'Id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 
-                            'Date' DATETIME NOT NULL, 
-                            'Task' TEXT NOT NULL, 
-                            'Priority' INTEGER NOT NULL, 
-                        );";
+            string sql = @"CREATE TABLE ToDoList (
+	                        'Id'	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	                        'Date'	TEXT NOT NULL,
+	                        'Task'	TEXT,
+	                        'Priority'	INTEGER
+                         );";
 
             connection.Open();
             using (cmd = new SQLiteCommand(sql, connection))
@@ -64,7 +64,7 @@ namespace ToDoList.SQL
                         retVal.Add(new ToDoItem()
                         {
                             ID = dr.GetInt32(0),
-                            Date = dr.GetDateTime(1),
+                            Date = dr.GetString(1),
                             Task = dr.GetString(2),
                             Priority = dr.GetInt32(3)
                         });
@@ -92,7 +92,7 @@ namespace ToDoList.SQL
                         retVal = new ToDoItem()
                         {
                             ID = dr.GetInt32(0),
-                            Date = dr.GetDateTime(1),
+                            Date = dr.GetString(1),
                             Task = dr.GetString(2),
                             Priority = dr.GetInt32(3)
                         };

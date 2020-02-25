@@ -7,7 +7,7 @@ namespace ToDoList.Data
     class ToDoItem : IComparable<ToDoItem>
     {
         public int ID { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
         public string Task { get; set; }
         public int Priority { get; set; }
 
