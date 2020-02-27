@@ -78,11 +78,7 @@ namespace ToDoList.GUI
 
         private void Start()
         {
-            Random rnd = new Random();
-            int ID = rnd.Next(89);
-
-            List<ToDoItem> TD_Task = new List<ToDoItem>();
-            bool check = true; ;
+          bool check = true;
 
         START:
 
@@ -92,8 +88,8 @@ namespace ToDoList.GUI
 
                 header();
                 Console.WriteLine(xst + "1.New Task.\t\t5.Update Task.\n");
-                Console.WriteLine(xst + "2.View Al.\t\t6.Delete Task.\n");
-                Console.WriteLine(xst + "3.View b/w Dates.\t7.Sort.\n");
+                Console.WriteLine(xst + "2.View All.\t\t6.Delete Task.\n");
+                Console.WriteLine(xst + "3.View by ID.\t\t7.Sort.\n");
                 Console.WriteLine(xst + "4.Find Task.\t\t8.Exit\n");
                 footer();
 
@@ -116,106 +112,247 @@ namespace ToDoList.GUI
 
                     case 2: PrintTable(); break;
 
-                    case 3:
+                    case 3: FindByID(); break;
 
-                    case 4:
+                    case 4: FindByTask(); break;
 
-                    case 5:
+                    case 5: UpdateTableData(); break;
 
-                    case 6:
+                    case 6: DeleteTableData(); break;
 
                     case 7:
 
-                    case 8:
-                        Environment.Exit(0);
-                        break;
+                    case 8: Environment.Exit(0); break;
 
-                    default:
-                        Message("Invalid choice!");
-                        break;
-
+                    default: Message("Invalid choice!"); break;
                 }
             }
         }
         private void PrintTable()
         {
-            Console.WriteLine("Table content : ");
+            header();
+            Console.WriteLine("\t\tID \tDate\t\tTask\t\tLevel");
             List<ToDoItem> toDoItem = toDoListRepository.GetAll();
-            toDoItem.ForEach(Console.WriteLine);
-            Console.ReadLine();
+            //toDoItem.ForEach(Console.WriteLine);
+            toDoItem.ForEach(t => Console.WriteLine(t.PrittyString()));
+            footer();
+            Console.Write(st + "Press <any> key to continue:");
+            Console.ReadKey();
         }
 
         private void AddTableData()
         {
-            Console.WriteLine("Adding new task: ");
-            Console.Write("Date:");
+            START:
+            header();
+            Console.Write("\t\tEnter the Date.\t[yyyy-MM-dd]\n\t\t");          
             string date = Console.ReadLine();
-            Console.Write("Task:");
-            String task = Console.ReadLine();            
-            Console.Write("Priority:");
-            Int32 priority = Convert.ToInt32(Console.ReadLine());
+            string daat = date;
 
-            toDoListRepository.Add(new ToDoItem()
+            DateTime cur_time = DateTime.Now;
+            cur_time.ToString("yyyy-M-d");
+            try
             {
-                Date = date,
-                Task = task,
-                Priority = priority
-            });
+                TimeSpan duration = DateTime.Parse(cur_time.ToString()) - (DateTime.Parse(date.ToString()));
 
+
+                int day = (int)Math.Round(duration.TotalDays);
+
+                int x = 0;
+                if (day % 2 != 0)
+                {
+                    x = 2;
+                }
+                else
+                {
+                    x = 1;
+                }
+                if (day >= x) // if date less than todays   
+                {
+                    DateTime dtu = DateTime.Now;
+                    string msg = "Select date from\n\t\t" + dtu.ToString("yyyy-M-d") + " onwards!";
+                    Message("ERROR: " + msg);
+                    goto START;
+                }
+
+            }
+            catch (FormatException)
+            {
+                Message("ERROR: Invalid Date!");
+                goto START;
+            }
+            if (chk_date(daat)) // check validity of date   
+            {
+                Console.Write("\n\t\tEnter Task.\n\t\t");
+                String task = Console.ReadLine();
+                priority:
+                Console.Write("\n\t\tEnter Level of Priority.\t[1-5]\n\t\t");
+                int priority = int.Parse(Console.ReadLine());
+                if (priority >= 1 && priority <= 5)
+                {
+                    toDoListRepository.Add(new ToDoItem()
+                    {
+                        Date = date,
+                        Task = task,
+                        Priority = priority
+                    });
+                    Message("New Task created!");
+                       
+                }
+                else
+                {
+                    Message("ERROR: Only between [1-5]!");
+                    goto priority;
+                }
+            }
+            else
+            {
+                Message("ERROR: Invalid Date!");
+            }
         }
 
         private void UpdateTableData()
         {
-
-            Console.WriteLine("Which task you want to update: ");
-            Console.Write("Task id:");
-            int id;
-            while (!int.TryParse(Console.ReadLine(), out id))
+            header();
+            Console.Write("\t\tEnter the Task_ID.\n\t\t");
+            
+            try
             {
-                Console.Write("Please enter integer number. Task id:");
-            }
+                int id = int.Parse(Console.ReadLine());
+                Console.WriteLine("\t\t------------------------------------");
 
-            ToDoItem toDoItem = toDoListRepository.Get(id);
-
-            if (toDoItem != null)
-            {
-
-                //Console.WriteLine("Updating student - " + student);
-                Console.Write("New date:");
-                string date = Console.ReadLine();
-                Console.Write("New task:");
-                String task = Console.ReadLine();
-                Console.Write("New priority:");
-                Int32 priority = Convert.ToInt32(Console.ReadLine());
-
-                toDoListRepository.Update(new ToDoItem()
+                Start:
+                Console.Write("\t\tEnter the Date.\t[yyyy-MM-dd]\n\t\t");
+                try
                 {
-                    ID = id,
-                    Date = date,
-                    Task = task,
-                    Priority = priority
-                });
+                    string date = Console.ReadLine();
+                    string daat = date;
 
+                    DateTime cur_time = DateTime.Now;
+                    cur_time.ToString("yyyy-M-d");
+                    try
+                    {
+                        TimeSpan duration = DateTime.Parse(cur_time.ToString()) - (DateTime.Parse(date.ToString()));
+
+
+                        int day = (int)Math.Round(duration.TotalDays);
+
+                        if (day >= 2) // if date less than todays   
+                        {
+                            DateTime dtu = DateTime.Now;
+                            string msg = "Select date from\n\t\t" + dtu.ToString("yyyy-M-d") + " onwards!";
+                            Message("ERROR: " + msg);
+                            goto Start;
+                        }
+
+                    }
+                    catch (FormatException)
+                    {
+                        Message("ERROR: Invalid Date!");
+                        goto Start;
+
+                    }
+
+
+
+                    if (chk_date(daat)) // check validity of date   
+                    {
+                        Console.Write("\n\t\tEnter Task.\n\t\t");
+                        string task = Console.ReadLine();
+
+                        Console.Write("\n\t\tEnter Level of Priority.\t[1-5]\n\t\t");
+                        int priority = int.Parse(Console.ReadLine());
+                        if (priority >= 1 && priority <= 5)
+                        {
+
+                            toDoListRepository.Update(new ToDoItem()
+                            {
+                                ID = id,
+                                Date = date,
+                                Task = task,
+                                Priority = priority
+                            });
+
+                            Console.WriteLine("\t\tTask Updated!");
+  
+                        }
+                        else
+                        {
+                            Message("ERROR: Only between [1-5]!");
+                        }
+                    }
+                    else
+                    {
+                        Message("ERROR: Invalid Date!");
+                    }
+
+
+                }
+                catch (Exception)
+                {
+                    Message("ERROR: Enter Integer Only!!");
+                }
+
+                footer();
+                Console.Write(st + "Press <any> key to continue:");
+                Console.ReadKey();
 
             }
-            else
+            catch (Exception)
             {
-                Console.WriteLine("Task with this id does not exist.");
+
+                Message("ERROR: Insert Only Intergers!");
             }
 
         }
 
         private void DeleteTableData()
         {
-            Console.WriteLine("Which task you want to delete: ");
-            Console.Write("Task id:");
-            int id;
-            while (!int.TryParse(Console.ReadLine(), out id))
+            header();
+            Console.Write("\t\tEnter the Task_ID.\n\t\t");
+            try
             {
-                Console.Write("Please enter integer number. Task id:");
-            }
+                int id = int.Parse(Console.ReadLine());
+                Console.WriteLine("\t\t------------------------------------");
+                toDoListRepository.Delete(id);
+                Console.WriteLine("\n\n\t\t\t Record Deleted!\n\n");
+                footer();
+                Console.Write(st + "Press <any> key to continue:");
+                Console.ReadKey();
 
-            toDoListRepository.Delete(id);
+            }
+            catch (Exception)
+            {
+
+                Message("ERROR: Insert Only Intergers!");
+            }
+        }
+        private void FindByID()
+        {
+            header();
+            Console.Write("\t\tEnter ID.\t\n\t\t");
+            Int32 id = Convert.ToInt32(Console.ReadLine());
+            
+            header();
+            Console.WriteLine("\t\tID \tDate\tTask\t\tLevel");
+            ToDoItem toDoItem = toDoListRepository.Get(id);
+            Console.WriteLine(toDoItem);
+            footer();
+            Console.Write(st + "Press <any> key to continue:");
+            Console.ReadKey();
+        }
+        private void FindByTask()
+        {
+            header();
+            Console.Write("\t\tEnter word.\t\n\t\t");
+            string task = Console.ReadLine();
+
+            header();
+            Console.WriteLine("\t\tID \tDate\tTask\t\tLevel");
+            List<ToDoItem> toDoItem = toDoListRepository.Find(task);
+            toDoItem.ForEach(Console.WriteLine);
+            footer();
+            Console.Write(st + "Press <any> key to continue:");
+            Console.ReadKey();
         }
     }
 }

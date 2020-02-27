@@ -155,5 +155,30 @@ namespace ToDoList.SQL
                 connection.Close();
             }
         }
+        public List<ToDoItem> Find(string task)
+        {
+            List<ToDoItem> retVal = new List<ToDoItem>();
+            using (cmd = new SQLiteCommand("SELECT * FROM ToDoList WHERE Task LIKE @task;", connection))
+            {
+                connection.Open();
+                cmd.Parameters.Add(new SQLiteParameter("@task", "%" + task + "%"));
+                using (dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        retVal.Add(new ToDoItem()
+                        {
+                            ID = dr.GetInt32(0),
+                            Date = dr.GetString(1),
+                            Task = dr.GetString(2),
+                            Priority = dr.GetInt32(3)
+                        });
+
+                    }
+                }
+                connection.Close();
+            }
+            return retVal;
+        }
     }
 }

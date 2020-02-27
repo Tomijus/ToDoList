@@ -15,6 +15,11 @@ namespace ToDoList.Data
         {
             return $"ToDoItem(ID:{ID}, Datw:{Date}, Task:{Task}, Priority:{Priority})";
         }
+        public string PrittyString()
+        {
+
+            return "\t\t" + ID + "\t" + Date + "\t" + Task + "\t\t" + Priority;
+        }
         public int CompareTo(ToDoItem other)
         {
             return ID.CompareTo(other.ID);
