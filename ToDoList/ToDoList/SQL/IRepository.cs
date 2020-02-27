@@ -12,5 +12,6 @@ namespace ToDoList.SQL
         void Update(T item);
         void Delete(int id);
         List<T> Find(string task);
+        List<T> Sort();
     }
 }

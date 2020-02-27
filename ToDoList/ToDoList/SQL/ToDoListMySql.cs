@@ -179,5 +179,31 @@ namespace ToDoList.SQL
             }
             return retVal;
         }
+        public List<ToDoItem> Sort()
+        {
+            List<ToDoItem> retVal = new List<ToDoItem>();
+
+            using (cmd = new MySqlCommand("SELECT * FROM ToDoList ORDER BY @criteria ASC", connection))
+            {
+                connection.Open();
+                using (dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        retVal.Add(new ToDoItem()
+                        {
+                            ID = dr.GetInt32(0),
+                            Date = dr.GetString(1),
+                            Task = dr.GetString(2),
+                            Priority = dr.GetInt32(3)
+                        });
+
+                    }
+                }
+                connection.Close();
+            }
+
+            return retVal;
+        }
     }
 }

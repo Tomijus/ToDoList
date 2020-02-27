@@ -78,8 +78,6 @@ namespace ToDoList.GUI
 
         private void Start()
         {
-          bool check = true;
-
         START:
 
             while (true)
@@ -89,7 +87,7 @@ namespace ToDoList.GUI
                 header();
                 Console.WriteLine(xst + "1.New Task.\t\t5.Update Task.\n");
                 Console.WriteLine(xst + "2.View All.\t\t6.Delete Task.\n");
-                Console.WriteLine(xst + "3.View by ID.\t\t7.Sort.\n");
+                Console.WriteLine(xst + "3.View by ID.\t\t7.Sort by Priority.\n");
                 Console.WriteLine(xst + "4.Find Task.\t\t8.Exit\n");
                 footer();
 
@@ -120,7 +118,7 @@ namespace ToDoList.GUI
 
                     case 6: DeleteTableData(); break;
 
-                    case 7:
+                    case 7: SortByCriteria(); break;
 
                     case 8: Environment.Exit(0); break;
 
@@ -131,10 +129,10 @@ namespace ToDoList.GUI
         private void PrintTable()
         {
             header();
-            Console.WriteLine("\t\tID \tDate\t\tTask\t\tLevel");
+            Console.WriteLine("\t\tID \tDate\t\tTask\tPriority");
             List<ToDoItem> toDoItem = toDoListRepository.GetAll();
-            //toDoItem.ForEach(Console.WriteLine);
-            toDoItem.ForEach(t => Console.WriteLine(t.PrittyString()));
+            toDoItem.ForEach(Console.WriteLine);
+            //toDoItem.ForEach(t => Console.WriteLine(t.PrittyString()));
             footer();
             Console.Write(st + "Press <any> key to continue:");
             Console.ReadKey();
@@ -333,7 +331,7 @@ namespace ToDoList.GUI
             Int32 id = Convert.ToInt32(Console.ReadLine());
             
             header();
-            Console.WriteLine("\t\tID \tDate\tTask\t\tLevel");
+            Console.WriteLine("\t\tID \tDate\t\tTask\tPriority");
             ToDoItem toDoItem = toDoListRepository.Get(id);
             Console.WriteLine(toDoItem);
             footer();
@@ -347,8 +345,18 @@ namespace ToDoList.GUI
             string task = Console.ReadLine();
 
             header();
-            Console.WriteLine("\t\tID \tDate\tTask\t\tLevel");
+            Console.WriteLine("\t\tID \tDate\t\tTask\tPriority");
             List<ToDoItem> toDoItem = toDoListRepository.Find(task);
+            toDoItem.ForEach(Console.WriteLine);
+            footer();
+            Console.Write(st + "Press <any> key to continue:");
+            Console.ReadKey();
+        }
+        private void SortByCriteria()
+        {
+            header();
+            Console.WriteLine("\t\tID \tDate\t\tTask\tPriority");
+            List<ToDoItem> toDoItem = toDoListRepository.Sort();
             toDoItem.ForEach(Console.WriteLine);
             footer();
             Console.Write(st + "Press <any> key to continue:");
