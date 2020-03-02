@@ -40,19 +40,16 @@ namespace ToDoList.GUI
             Console.Clear();
             DateTime todaysDate = DateTime.Now;
 
-            Console.WriteLine("\n\n\n\t\t\t\t\t" + todaysDate.ToString("yyyy-MM-dd"));
-            Console.WriteLine("\t\t====================================");
-            Console.WriteLine("\t\t\t ToDo List");
-            Console.WriteLine("\t\t====================================");
+            Console.WriteLine("\n\n\n\t\t\t\t\t\t" + todaysDate.ToString("yyyy-MM-dd"));
+            Console.WriteLine("\t\t==========================================");
+            Console.WriteLine("\t\t\t\t ToDo List");
+            Console.WriteLine("\t\t==========================================");
         }
 
         public static void footer()
         {
-            Console.WriteLine("\t\t====================================");
+            Console.WriteLine("\t\t==========================================");
         }
-
-
-
         public static void Message(String msg)
         {
             header();
@@ -79,11 +76,8 @@ namespace ToDoList.GUI
         private void Start()
         {
         START:
-
             while (true)
             {
-
-
                 header();
                 Console.WriteLine(xst + "1.New Task.\t\t5.Update Task.\n");
                 Console.WriteLine(xst + "2.View All.\t\t6.Delete Task.\n");
@@ -99,11 +93,9 @@ namespace ToDoList.GUI
                 }
                 catch (Exception)
                 {
-
                     Message("ERROR: Insert Only Intergers!");
+                    goto START;
                 }
-
-                
                 switch (ch)
                 {
                     case 1: AddTableData(); break;
@@ -137,7 +129,6 @@ namespace ToDoList.GUI
             Console.Write(st + "Press <any> key to continue:");
             Console.ReadKey();
         }
-
         private void AddTableData()
         {
             START:
@@ -207,7 +198,6 @@ namespace ToDoList.GUI
                 Message("ERROR: Invalid Date!");
             }
         }
-
         private void UpdateTableData()
         {
             header();
@@ -302,7 +292,6 @@ namespace ToDoList.GUI
             }
 
         }
-
         private void DeleteTableData()
         {
             header();
@@ -328,8 +317,16 @@ namespace ToDoList.GUI
         {
             header();
             Console.Write("\t\tEnter ID.\t\n\t\t");
-            Int32 id = Convert.ToInt32(Console.ReadLine());
-            
+            int id = 0;
+            try
+            {
+                id = int.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                Message("ERROR: Insert Only Intergers!");
+            }
+
             header();
             Console.WriteLine("\t\tID \tDate\t\tTask\tPriority");
             ToDoItem toDoItem = toDoListRepository.Get(id);
